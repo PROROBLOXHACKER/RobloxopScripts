@@ -1,0 +1,95 @@
+local GP = Instance.new("Part")
+local GM = Instance.new("SpecialMesh", GP)
+local T = Instance.new("Tool")
+local SAA = Instance.new("Animation")
+local IAA = Instance.new("Animation")
+local SSS = Instance.new("Sound")
+local HP = GP.Position
+local MH = game.Players.LocalPlayer:GetMouse().Hit.p
+local plr = game.Players.LocalPlayer
+SSS.SoundId = "rbxassetid://1905367471"
+---                                               Making Loot                               ---
+print("Making Loot")
+
+T.Name = "Gun"
+T.Parent = game.Players.LocalPlayer.Backpack
+T.GripForward = Vector3.new(0, 0, -1)
+T.GripPos = Vector3.new(0,0,0)
+T.GripRight = Vector3.new(1,0,0)
+T.GripUp = Vector3.new(0,1,0)
+T.ToolTip = "Are u are hacking OMG, by 10PMNJ2 / DEVELOPERBACON ON YT"
+T.CanBeDropped = false
+T.ManualActivationOnly = false
+T.RequiresHandle = true
+
+GP.Name = "Handle"
+GP.Anchored = false
+GP.CanCollide = false
+GP.Parent = T
+GP.CastShadow = false
+GP.CanQuery = false
+GP.Transparency = 0
+GP.Size = Vector3.new(1, 1.6, 4.2)
+
+GM.Name = "GunMesh"
+GM.MeshId = "rbxassetid://3824749"
+GM.TextureId = "http://www.roblox.com/asset/?id=159740858"
+GM.Offset = Vector3.new(0,0,0)
+GM.Scale = Vector3.new(2, 1.3, 1.1)
+GM.VertexColor = Vector3.new(0.7, 0.7, 0.7)
+GM.Parent = GP
+GM.MeshType = Enum.MeshType.FileMesh
+
+-- Coding
+print("Coding Gun")
+
+
+IAA.AnimationId = "rbxassetid://9744140476"
+SAA.AnimationId = "rbxassetid://9744134550"
+
+T.Equipped:Connect(function()
+	local hum = game.Players.LocalPlayer.Character.Humanoid
+	local LA = hum:LoadAnimation(IAA)
+	T.Unequipped:Connect(function()
+		LA:Stop()
+	end)
+end)
+
+T.Activated:Connect(function()
+	SSS:Play()
+	local humanoid = game.Players.LocalPlayer.Character.Humanoid
+	humanoid:LoadAnimation(SAA):Play()
+	-- Making Bullets
+	print("Making a Bullet")
+	local B = Instance.new("Part")
+	B.Name = "Bullet"
+	B.Anchored = false
+	B.CanCollide = false
+	B.Parent = workspace
+	B.CanTouch = true
+	B.BrickColor = BrickColor.new("Gold")
+	B.Transparency = 0
+	B.Orientation = Vector3.new(0,-90,0)
+	B.Size = Vector3.new(0.5, 0.25, 0.5)
+	B.Shape = Enum.PartType.Cylinder
+	local Distance = (GP.Position - MH)
+	local Speed = 500
+	
+	B.CFrame = CFrame.new(GP.Position, MH)
+	B.Velocity = B.CFrame.LookVector * Speed
+	
+	
+	local function PlayerCheck(otherpart)
+		local Attacker = Instance.new("StringValue")
+		Attacker.Name = "Attacker"
+		Attacker.Parent = B
+		Attacker.Value = game.Players.LocalPlayer.Name
+		
+		local hum2 = otherpart.Parent:FindFirstChild("Humanoid")
+		if hum2 and hum2.Parent.Name ~= Attacker.Value then
+			hum2:TakeDamage(20)
+		end
+	end
+	
+	B.Touched:Connect(PlayerCheck)
+end)
